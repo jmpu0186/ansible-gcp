@@ -1,25 +1,3 @@
-#- name: Download Jenkins repo yum URL for
-#  get_url:
-#    url: "{{jenkins.repo_URL}}"
-#    dest: /etc/yum.repos.d/jenkins.repo
-#  become: true
-#
-#- name: Import GPG Key
-#  rpm_key:
-#    state: present
-#    key: "{{jenkins.gpg_key}}"
-#
-#- name: Install Jenkins
-#  yum:
-#    name: jenkins
-#    state: present
-#
-#- name: Start Jenkins service and enable on boot
-#  service:
-#    name: jenkins
-#    state: started
-#    enabled: yes
-
 - name: Install plugin blueocean
   jenkins_plugin:
     name: blueocean
@@ -39,3 +17,14 @@
     config: "{{ lookup('file', '../jobs/example.xml') }}"
     name: test
     url: http://localhost:8080
+
+- jenkins_job:
+    config: "{{ lookup('file', '../jobs/jobdsl.xml') }}"
+    name: job1
+    url: http://localhost:8080
+
+- name: Restart Jenkins service and enable on boot
+  service:
+    name: jenkins
+    state: restarted
+    enabled: yes
