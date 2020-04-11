@@ -13,7 +13,13 @@
     name: git
     timeout: 180
 
-- jenkins_job:
+- name: Restart Jenkins service and enable on boot
+  service:
+    name: jenkins
+    state: restarted
+    enabled: yes
+    
+ - jenkins_job:
     config: "{{ lookup('file', '../jobs/example.xml') }}"
     name: test
     url: http://localhost:8080
@@ -22,9 +28,3 @@
     config: "{{ lookup('file', '../jobs/jobdsl.xml') }}"
     name: job1
     url: http://localhost:8080
-
-- name: Restart Jenkins service and enable on boot
-  service:
-    name: jenkins
-    state: restarted
-    enabled: yes
