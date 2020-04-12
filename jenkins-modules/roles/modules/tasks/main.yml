@@ -13,6 +13,11 @@
     name: git
     timeout: 180
 
+- name: Install plugin jacoco
+  jenkins_plugin:
+    name: jacoco
+    timeout: 180
+
 - name: Restart Jenkins service and enable on boot
   service:
     name: jenkins
