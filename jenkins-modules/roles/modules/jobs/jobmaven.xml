@@ -1,0 +1,37 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.38">
+  <actions/>
+  <description>JOBMAVEN</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.plugins.jira.JiraProjectProperty plugin="jira@3.0.15"/>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.80">
+    <script>node {
+  stage(&apos;Descarga Fuente&apos;) { // for display purposes
+        git &apos;https://github.com/jmpu0186/devopsdemo.git&apos;
+   }
+    stage(&apos;clean&apos;) { // for display purposes
+     docker.image(&apos;maven:3-alpine&apos;).inside(&apos;-v /root/.m2:/root/.m2&apos;){
+        sh &apos;mvn clean&apos;
+     }
+   }
+   stage(&quot;testunit&quot;) {
+
+                                  docker.image(&apos;maven:3-alpine&apos;).inside(&apos;-v /root/.m2:/root/.m2&apos;){
+                                                sh &apos;mvn test&apos;
+                                                step([$class: &apos;JacocoPublisher&apos;, testResults: &apos;**/target/surefire-reports/TEST-*.xml&apos;])
+                                            }
+
+    }
+    stage(&quot;compilar&quot;){
+         docker.image(&apos;maven:3-alpine&apos;).inside(&apos;-v /root/.m2:/root/.m2&apos;){
+                    sh &apos;mvn package -DskipTests -Ddockerfile.skip&apos;
+        }
+    }
+}</script>
+    <sandbox>true</sandbox>
+  </definition>
+  <triggers/>
+  <disabled>false</disabled>
+</flow-definition>
